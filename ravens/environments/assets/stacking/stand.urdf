@@ -1,0 +1,88 @@
+<?xml version="0.0" ?>
+<robot name="stand.urdf">
+  <link name="baseLink">
+    <contact>
+      <lateral_friction value="1.0"/>
+      <rolling_friction value="0.0001"/>
+      <inertia_scaling value="3.0"/>
+    </contact>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+       <mass value=".1"/>
+       <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="base1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+       <mass value=".1"/>
+       <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 -0.05 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+      <material name="lightbrown">
+        <color rgba="0.91764706 0.68823529 0.55882353 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.05 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="baseLink-base1" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="baseLink"/>
+    <child link="base1"/>
+  </joint>
+
+  <link name="base2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+       <mass value=".1"/>
+       <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0.05 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+      <material name="darkbrown">
+        <color rgba="0.30588235 0.22941176 0.18627451 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.05 0"/>
+      <geometry>
+        <box size=".05 .05 .005"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="baseLink-base2" type="fixed">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="baseLink"/>
+    <child link="base2"/>
+  </joint>
+
+</robot>
+
