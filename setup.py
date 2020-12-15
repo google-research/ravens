@@ -16,12 +16,26 @@
 """Setup."""
 
 from distutils import core
+import os
+
 from setuptools import find_packages
 
-# Bare-bones setup file so we can import ravens.
+
+here = os.path.abspath(os.path.dirname(__file__))
+try:
+  README = open(os.path.join(here, 'README.md'), encoding='utf-8').read()
+except IOError:
+  README = ''
+
+
 core.setup(
     name='ravens',
-    version='0.0.1',
-    author='Andy Zeng, Pete Florence, Daniel Seita, Jonathan Tompson',
+    version='0.1',
+    description='Ravens is a collection of simulated tasks in PyBullet for learning vision-based robotic manipulation.',
+    long_description='\n\n'.join([README]),
+    long_description_content_type='text/markdown',
+    author='Andy Zeng, Pete Florence, Daniel Seita, Jonathan Tompson, Ayzaan Wahid',
+    author_email='ravens-team@google.com',
+    url='https://github.com/google-research/ravens',
     packages=find_packages(),
 )
