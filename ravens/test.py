@@ -24,13 +24,14 @@ import numpy as np
 from ravens import agents
 from ravens import dataset
 from ravens import tasks
-from ravens.environments import environment
+from ravens.environments.environment import Environment
 import tensorflow as tf
 
 flags.DEFINE_string('root_dir', '.', '')
 flags.DEFINE_string('data_dir', '.', '')
 flags.DEFINE_string('assets_root', './assets/', '')
-flags.DEFINE_bool('disp', True, '')
+flags.DEFINE_bool('disp', False, '')
+flags.DEFINE_bool('shared_memory', False, '')
 flags.DEFINE_string('task', 'hanoi', '')
 flags.DEFINE_string('agent', 'transporter', '')
 flags.DEFINE_integer('n_demos', 100, '')
@@ -58,7 +59,7 @@ def main(unused_argv):
     cfg.set_virtual_device_configuration(gpus[0], dev_cfg)
 
   # Initialize environment and task.
-  env = environment.Environment(FLAGS.assets_root, FLAGS.disp, hz=480)
+  env = Environment(FLAGS.assets_root, FLAGS.disp, FLAGS.shared_memory, hz=480)
   task = tasks.names[FLAGS.task]()
   task.mode = 'test'
 
@@ -98,7 +99,7 @@ def main(unused_argv):
         act = agent.act(obs, info, goal)
         obs, reward, done, info = env.step(act)
         total_reward += reward
-        print(f'{done} {total_reward}')
+        print(f'Total Reward: {total_reward} Done: {done}')
         if done:
           break
       results.append((total_reward, info))

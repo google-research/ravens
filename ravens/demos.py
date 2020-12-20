@@ -28,7 +28,8 @@ from ravens.environments.environment import Environment
 
 flags.DEFINE_string('assets_root', '.', '')
 flags.DEFINE_string('data_dir', '.', '')
-flags.DEFINE_bool('disp', True, '')
+flags.DEFINE_bool('disp', False, '')
+flags.DEFINE_bool('shared_memory', False, '')
 flags.DEFINE_string('task', 'hanoi', '')
 flags.DEFINE_string('mode', 'train', '')
 flags.DEFINE_integer('n', 1000, '')
@@ -39,7 +40,7 @@ FLAGS = flags.FLAGS
 def main(unused_argv):
 
   # Initialize environment and task.
-  env = Environment(FLAGS.assets_root, FLAGS.disp, hz=480)
+  env = Environment(FLAGS.assets_root, FLAGS.disp, FLAGS.shared_memory, hz=480)
   task = tasks.names[FLAGS.task]()
   task.mode = FLAGS.mode
 
@@ -67,7 +68,7 @@ def main(unused_argv):
       episode.append((obs, act, reward, info))
       obs, reward, done, info = env.step(act)
       total_reward += reward
-      print(f'{done} {total_reward}')
+      print(f'Total Reward: {total_reward} Done: {done}')
       if done:
         break
     episode.append((obs, None, reward, info))

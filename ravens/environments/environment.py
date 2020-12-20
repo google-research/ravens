@@ -36,12 +36,13 @@ PLANE_URDF_PATH = 'plane/plane.urdf'
 class Environment(gym.Env):
   """OpenAI Gym-style environment class."""
 
-  def __init__(self, assets_root, disp=False, hz=240):
+  def __init__(self, assets_root, disp=False, shared_memory=False, hz=240):
     """Creates OpenAI Gym-style environment with PyBullet.
 
     Args:
       assets_root: root directory of assets.
-      disp: show environment with PyBullet's built-in display viewer
+      disp: show environment with PyBullet's built-in display viewer.
+      shared_memory: run with shared memory.
       hz: PyBullet physics simulation step speed. Set to 480 for deformables.
 
     Raises:
@@ -74,7 +75,12 @@ class Environment(gym.Env):
     })
 
     # Start PyBullet.
-    client = p.connect(p.SHARED_MEMORY if disp else p.DIRECT)
+    disp_option = p.DIRECT
+    if disp:
+      disp_option = p.GUI
+      if shared_memory:
+        disp_option = p.SHARED_MEMORY
+    client = p.connect(disp_option)
     file_io = p.loadPlugin('fileIOPlugin', physicsClientId=client)
     if file_io < 0:
       raise RuntimeError('pybullet: cannot load FileIO!')

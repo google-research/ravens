@@ -60,29 +60,31 @@ conda install cudnn==7.6.5 -y
 
 ## Getting Started
 
-**Step 1.** Generate training and testing data. Note: remove `--disp` for headless mode.
+**Step 1.** Generate training and testing data (saved locally). Note: remove `--disp` for headless mode.
 
 ```shell
-python ravens/demos.py  --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --mode=train --n=10
-python ravens/demos.py  --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --mode=test --n=100
+python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --mode=train --n=10
+python ravens/demos.py --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --mode=test --n=100
 ```
 
-**Step 2.** Train a model e.g., Transporter Networks model.
+To run with shared memory, open a separate terminal window and run `python3 -m pybullet_utils.runServer`. Then add `--shared_memory` flag to the command above.
+
+**Step 2.** Train a model e.g., Transporter Networks model. Model checkpoints are saved to the `checkpoints` directory. Optional: you may exit training prematurely after 1000 iterations to skip to the next step.
 
 ```shell
-python ravens/train.py - --assets_root=./ravens/environments/assets/ -task=block-insertion --agent=transporter --n_demos=10
+python ravens/train.py --task=block-insertion --agent=transporter --n_demos=10
 ```
 
-**Step 3.** Evaluate a Transporter Networks agent with the trained model.
+**Step 3.** Evaluate a Transporter Networks agent using the model trained for 1000 iterations. Results are saved locally into `.pkl` files.
 
 ```shell
-python ravens/test.py  --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --agent=transporter --n_demos=10 --n_steps=1000
+python ravens/test.py --assets_root=./ravens/environments/assets/ --disp=True --task=block-insertion --agent=transporter --n_demos=10 --n_steps=1000
 ```
 
-**Step 4.** Plot results.
+**Step 4.** Plot and print results.
 
 ```shell
-python ravens/plot.py  --assets_root=./ravens/environments/assets/ -disp=True --task=block-insertion --agent=transporter --n_demos=10
+python ravens/plot.py --disp=True --task=block-insertion --agent=transporter --n_demos=10
 ```
 
 **Optional.** Track training and validation losses with Tensorboard.
