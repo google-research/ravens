@@ -52,7 +52,12 @@ class Task():
     self.progress = 0
     self._rewards = 0
 
+    self.assets_root = None
+
   def reset(self, env):  # pylint: disable=unused-argument
+    if not self.assets_root:
+      raise ValueError('assets_root must be set for task, '
+                       'call set_assets_root().')
     self.goals = []
     self.progress = 0  # Task progression metric in range [0, 1].
     self._rewards = 0  # Cumulative returned rewards.
@@ -319,8 +324,7 @@ class Task():
 
   def fill_template(self, template, replace):
     """Read a file and replace key strings."""
-    filepath = os.path.dirname(os.path.abspath(__file__))
-    template = os.path.join(filepath, '..', template)
+    template = os.path.join(self.assets_root, template)
     with open(template, 'r') as file:
       fdata = file.read()
     for field in replace:
@@ -355,3 +359,6 @@ class Task():
     shade = np.random.rand() + 0.5
     color = np.float32([shade * 156, shade * 117, shade * 95, 255]) / 255
     p.changeVisualShape(obj, -1, rgbaColor=color)
+
+  def set_assets_root(self, assets_root):
+    self.assets_root = assets_root

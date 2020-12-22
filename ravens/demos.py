@@ -40,7 +40,11 @@ FLAGS = flags.FLAGS
 def main(unused_argv):
 
   # Initialize environment and task.
-  env = Environment(FLAGS.assets_root, FLAGS.disp, FLAGS.shared_memory, hz=480)
+  env = Environment(
+      FLAGS.assets_root,
+      disp=FLAGS.disp,
+      shared_memory=FLAGS.shared_memory,
+      hz=480)
   task = tasks.names[FLAGS.task]()
   task.mode = FLAGS.mode
 

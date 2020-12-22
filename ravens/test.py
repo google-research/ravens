@@ -59,7 +59,11 @@ def main(unused_argv):
     cfg.set_virtual_device_configuration(gpus[0], dev_cfg)
 
   # Initialize environment and task.
-  env = Environment(FLAGS.assets_root, FLAGS.disp, FLAGS.shared_memory, hz=480)
+  env = Environment(
+      FLAGS.assets_root,
+      disp=FLAGS.disp,
+      shared_memory=FLAGS.shared_memory,
+      hz=480)
   task = tasks.names[FLAGS.task]()
   task.mode = 'test'
 
