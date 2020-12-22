@@ -34,7 +34,7 @@ class StackBlockPyramid(Task):
 
     # Add base.
     base_size = (0.05, 0.15, 0.005)
-    base_urdf = 'assets/stacking/stand.urdf'
+    base_urdf = 'stacking/stand.urdf'
     base_pose = self.get_random_pose(env, base_size)
     env.add_object(base_urdf, base_pose, 'fixed')
 
@@ -48,7 +48,7 @@ class StackBlockPyramid(Task):
     objs = []
     # sym = np.pi / 2
     block_size = (0.04, 0.04, 0.04)
-    block_urdf = 'assets/stacking/block.urdf'
+    block_urdf = 'stacking/block.urdf'
     for i in range(6):
       block_pose = self.get_random_pose(env, block_size)
       block_id = env.add_object(block_urdf, block_pose)

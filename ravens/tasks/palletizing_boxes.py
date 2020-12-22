@@ -36,7 +36,7 @@ class PalletizingBoxes(Task):
 
     # Add pallet.
     zone_size = (0.3, 0.25, 0.25)
-    zone_urdf = 'assets/pallet/pallet.urdf'
+    zone_urdf = 'pallet/pallet.urdf'
     rotation = utils.eulerXYZ_to_quatXYZW((0, 0, 0))
     zone_pose = ((0.5, 0.25, 0.02), rotation)
     env.add_object(zone_urdf, zone_pose, 'fixed')
@@ -46,7 +46,7 @@ class PalletizingBoxes(Task):
     object_ids = []
     object_points = {}
     stack_size = (0.19, 0.19, 0.19)
-    box_template = 'assets/box/box-template.urdf'
+    box_template = 'box/box-template.urdf'
     stack_dim = np.int32([2, 3, 3])
     # stack_dim = np.random.randint(low=2, high=4, size=3)
     box_size = (stack_size - (stack_dim - 1) * margin) / stack_dim

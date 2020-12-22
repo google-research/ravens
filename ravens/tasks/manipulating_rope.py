@@ -44,7 +44,7 @@ class ManipulatingRope(Task):
     # Add 3-sided square.
     square_size = (length, length, 0)
     square_pose = self.get_random_pose(env, square_size)
-    square_template = 'assets/square/square-template.urdf'
+    square_template = 'square/square-template.urdf'
     replace = {'DIM': (length,), 'HALF': (length / 2 - 0.005,)}
     urdf = self.fill_template(square_template, replace)
     env.add_object(urdf, square_pose, 'fixed')

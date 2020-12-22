@@ -37,7 +37,7 @@ class SweepingPiles(Task):
     # Add goal zone.
     zone_size = (0.12, 0.12, 0)
     zone_pose = self.get_random_pose(env, zone_size)
-    env.add_object('assets/zone/zone.urdf', zone_pose, 'fixed')
+    env.add_object('zone/zone.urdf', zone_pose, 'fixed')
 
     # Add pile of small blocks.
     obj_pts = {}
@@ -48,7 +48,7 @@ class SweepingPiles(Task):
       xyz = (rx, ry, 0.01)
       theta = np.random.rand() * 2 * np.pi
       xyzw = utils.eulerXYZ_to_quatXYZW((0, 0, theta))
-      obj_id = env.add_object('assets/block/small.urdf', (xyz, xyzw))
+      obj_id = env.add_object('block/small.urdf', (xyz, xyzw))
       obj_pts[obj_id] = self.get_object_points(obj_id)
       obj_ids.append((obj_id, (0, None)))
 

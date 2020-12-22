@@ -16,6 +16,7 @@
 """Environment class."""
 
 import os
+import tempfile
 import time
 
 import gym
@@ -76,7 +77,7 @@ class Environment(gym.Env):
     })
     # TODO(ayzaan): Delete below and uncomment vector box bounds.
     position_bounds = gym.spaces.Box(
-        low=-0.5, high=0.75, shape=(3,), dtype=np.float32)
+        low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
     # position_bounds = gym.spaces.Box(
     #     low=np.array([0.25, -0.5, 0.], dtype=np.float32),
     #     high=np.array([0.75, 0.5, 0.28], dtype=np.float32),
@@ -86,11 +87,11 @@ class Environment(gym.Env):
         'pose0':
             gym.spaces.Tuple(
                 (position_bounds,
-                 gym.spaces.Box(0.0, 1.0, shape=(4,), dtype=np.float32))),
+                 gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32))),
         'pose1':
             gym.spaces.Tuple(
                 (position_bounds,
-                 gym.spaces.Box(0.0, 1.0, shape=(4,), dtype=np.float32)))
+                 gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32)))
     })
 
     # Start PyBullet.
@@ -113,6 +114,7 @@ class Environment(gym.Env):
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.setAdditionalSearchPath(assets_root)
+    p.setAdditionalSearchPath(tempfile.gettempdir())
     p.setTimeStep(1. / hz)
 
     # If using --disp, move default camera closer to the scene.

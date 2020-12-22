@@ -40,7 +40,7 @@ class AssemblingKits(Task):
 
     # Add kit.
     kit_size = (0.28, 0.2, 0.005)
-    kit_urdf = 'assets/kitting/kit.urdf'
+    kit_urdf = 'kitting/kit.urdf'
     kit_pose = self.get_random_pose(env, kit_size)
     env.add_object(kit_urdf, kit_pose, 'fixed')
 
@@ -69,9 +69,10 @@ class AssemblingKits(Task):
     targ_pos = [[-0.09, 0.045, 0.0014], [0, 0.045, 0.0014],
                 [0.09, 0.045, 0.0014], [-0.045, -0.045, 0.0014],
                 [0.045, -0.045, 0.0014]]
-    template = 'assets/kitting/object-template.urdf'
+    template = 'kitting/object-template.urdf'
     for i in range(n_objects):
-      shape = f'{obj_shapes[i]:02d}.obj'
+      shape = os.path.join(self.assets_root, 'kitting',
+                           f'{obj_shapes[i]:02d}.obj')
       scale = [0.003, 0.003, 0.0001]  # .0005
       pos = utils.apply(kit_pose, targ_pos[i])
       theta = np.random.rand() * 2 * np.pi
@@ -91,6 +92,7 @@ class AssemblingKits(Task):
       size = (0.08, 0.08, 0.02)
       pose = self.get_random_pose(env, size)
       fname = f'{shape:02d}.obj'
+      fname = os.path.join(self.assets_root, 'kitting', fname)
       scale = [0.003, 0.003, 0.001]  # .0005
       replace = {'FNAME': (fname,), 'SCALE': scale, 'COLOR': colors[i]}
       urdf = self.fill_template(template, replace)

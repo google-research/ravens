@@ -37,7 +37,7 @@ class PlaceRedInGreen(Task):
 
     # Add bowls.
     bowl_size = (0.12, 0.12, 0)
-    bowl_urdf = 'assets/bowl/bowl.urdf'
+    bowl_urdf = 'bowl/bowl.urdf'
     bowl_poses = []
     for _ in range(n_bowls):
       bowl_pose = self.get_random_pose(env, bowl_size)
@@ -47,7 +47,7 @@ class PlaceRedInGreen(Task):
     # Add blocks.
     blocks = []
     block_size = (0.04, 0.04, 0.04)
-    block_urdf = 'assets/stacking/block.urdf'
+    block_urdf = 'stacking/block.urdf'
     for _ in range(n_blocks):
       block_pose = self.get_random_pose(env, block_size)
       block_id = env.add_object(block_urdf, block_pose)

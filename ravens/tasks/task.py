@@ -19,6 +19,7 @@ import collections
 import os
 import random
 import string
+import tempfile
 
 import cv2
 import numpy as np
@@ -324,15 +325,17 @@ class Task():
 
   def fill_template(self, template, replace):
     """Read a file and replace key strings."""
-    template = os.path.join(self.assets_root, template)
-    with open(template, 'r') as file:
+    full_template_path = os.path.join(self.assets_root, template)
+    with open(full_template_path, 'r') as file:
       fdata = file.read()
     for field in replace:
       for i in range(len(replace[field])):
         fdata = fdata.replace(f'{field}{i}', str(replace[field][i]))
     alphabet = string.ascii_lowercase + string.digits
     rname = ''.join(random.choices(alphabet, k=16))
-    fname = f'{template}.{rname}'
+    tmpdir = tempfile.gettempdir()
+    template_filename = os.path.split(template)[-1]
+    fname = os.path.join(tmpdir, f'{template_filename}.{rname}')
     with open(fname, 'w') as file:
       file.write(fdata)
     return fname

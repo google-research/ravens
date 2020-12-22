@@ -32,7 +32,7 @@ class TowersOfHanoi(Task):
 
     # Add stand.
     base_size = (0.12, 0.36, 0.01)
-    base_urdf = 'assets/hanoi/stand.urdf'
+    base_urdf = 'hanoi/stand.urdf'
     base_pose = self.get_random_pose(env, base_size)
     env.add_object(base_urdf, base_pose, 'fixed')
 
@@ -43,7 +43,7 @@ class TowersOfHanoi(Task):
     disks = []
     n_disks = 3
     for i in range(n_disks):
-      disk_urdf = 'assets/hanoi/disk%d.urdf' % i
+      disk_urdf = 'hanoi/disk%d.urdf' % i
       pos = utils.apply(base_pose, rod_pos[0])
       z = 0.015 * (n_disks - i - 2)
       pos = (pos[0], pos[1], pos[2] + z)

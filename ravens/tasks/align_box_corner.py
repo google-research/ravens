@@ -38,7 +38,7 @@ class AlignBoxCorner(Task):
     # Add corner.
     dimx = (box_size[0] / 2 - 0.025 + 0.0025, box_size[0] / 2 + 0.0025)
     dimy = (box_size[1] / 2 + 0.0025, box_size[1] / 2 - 0.025 + 0.0025)
-    corner_template = 'assets/corner/corner-template.urdf'
+    corner_template = 'corner/corner-template.urdf'
     replace = {'DIMX': dimx, 'DIMY': dimy}
     corner_urdf = self.fill_template(corner_template, replace)
     corner_size = (box_size[0], box_size[1], 0)
@@ -59,7 +59,7 @@ class AlignBoxCorner(Task):
     pose3 = utils.multiply(corner_pose, (alt_pos, alt_rot1))
 
     # Add box.
-    box_template = 'assets/box/box-template.urdf'
+    box_template = 'box/box-template.urdf'
     box_urdf = self.fill_template(box_template, {'DIM': box_size})
     box_pose = self.get_random_pose(env, box_size)
     box_id = env.add_object(box_urdf, box_pose)
