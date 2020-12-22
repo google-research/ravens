@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2020 The Ravens Authors.
+# Copyright 2021 The Ravens Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ flags.DEFINE_string('assets_root', '.', '')
 flags.DEFINE_string('data_dir', '.', '')
 flags.DEFINE_bool('disp', False, '')
 flags.DEFINE_bool('shared_memory', False, '')
-flags.DEFINE_string('task', 'towers-of-hanoi', '')
+flags.DEFINE_string('task', 'hanoi', '')
 flags.DEFINE_string('mode', 'train', '')
 flags.DEFINE_integer('n', 1000, '')
 

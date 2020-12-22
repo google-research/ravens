@@ -58,21 +58,6 @@ conda install cudatoolkit==10.1.243 -y
 conda install cudnn==7.6.5 -y
 ```
 
-### Alternative: Pure `pip`
-
-As an example for Ubuntu 18.04:
-
-```shell
-./oss_scipts/install_cuda.sh  #  For Ubuntu 16.04 and 18.04.
-sudo apt install gcc libgl1-mesa-dev python3.8-venv
-python3.8 -m venv ./venv
-source ./venv/bin/activate
-pip install -U pip
-pip install scikit-build
-pip install -r ./requirements.txt
-export PYTHONPATH=${PWD}
-```
-
 ## Getting Started
 
 **Step 1.** Generate training and testing data (saved locally). Note: remove `--disp` for headless mode.
