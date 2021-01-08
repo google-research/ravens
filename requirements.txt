@@ -5,7 +5,6 @@ pybullet>=3.0.4
 matplotlib>=3.1.1
 opencv-python>=4.1.2.30
 meshcat>=0.0.18
-transforms3d==0.3.1
 scipy==1.4.1
 scikit-image>=0.17.2
 tensorflow==2.3.0
