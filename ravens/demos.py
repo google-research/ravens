@@ -30,7 +30,7 @@ flags.DEFINE_string('assets_root', '.', '')
 flags.DEFINE_string('data_dir', '.', '')
 flags.DEFINE_bool('disp', False, '')
 flags.DEFINE_bool('shared_memory', False, '')
-flags.DEFINE_string('task', 'hanoi', '')
+flags.DEFINE_string('task', 'towers-of-hanoi', '')
 flags.DEFINE_string('mode', 'train', '')
 flags.DEFINE_integer('n', 1000, '')
 
