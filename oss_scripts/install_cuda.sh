@@ -13,6 +13,7 @@
 # limitations under the License.
 
 #!/bin/bash
+
 set -uexo pipefail
 
 readonly SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
