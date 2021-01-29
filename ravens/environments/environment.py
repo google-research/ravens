@@ -23,6 +23,7 @@ import gym
 import numpy as np
 from ravens.tasks import cameras
 from ravens.utils import pybullet_utils
+from ravens.utils import utils
 
 import pybullet as p
 
@@ -75,22 +76,19 @@ class Environment(gym.Env):
         'color': gym.spaces.Tuple(color_tuple),
         'depth': gym.spaces.Tuple(depth_tuple),
     })
-    # TODO(ayzaan): Delete below and uncomment vector box bounds.
-    position_bounds = gym.spaces.Box(
-        low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
-    # position_bounds = gym.spaces.Box(
-    #     low=np.array([0.25, -0.5, 0.], dtype=np.float32),
-    #     high=np.array([0.75, 0.5, 0.28], dtype=np.float32),
-    #     shape=(3,),
-    #     dtype=np.float32)
+    self.position_bounds = gym.spaces.Box(
+        low=np.array([0.25, -0.5, 0.], dtype=np.float32),
+        high=np.array([0.75, 0.5, 0.28], dtype=np.float32),
+        shape=(3,),
+        dtype=np.float32)
     self.action_space = gym.spaces.Dict({
         'pose0':
             gym.spaces.Tuple(
-                (position_bounds,
+                (self.position_bounds,
                  gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32))),
         'pose1':
             gym.spaces.Tuple(
-                (position_bounds,
+                (self.position_bounds,
                  gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32)))
     })
 
@@ -108,7 +106,7 @@ class Environment(gym.Env):
       p.executePluginCommand(
           file_io,
           textArgument=assets_root,
-          intArgs=[p.AddFileIOAction, p.CNSFileIO],
+          intArgs=[p.AddFileIOAction],
           physicsClientId=client)
 
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
@@ -234,12 +232,7 @@ class Environment(gym.Env):
     # Add ground truth robot state into info.
     info.update(self.info)
 
-    # Get RGB-D camera image observations.
-    obs = {'color': (), 'depth': ()}
-    for config in self.agent_cams:
-      color, depth, _ = self.render_camera(config)
-      obs['color'] += (color,)
-      obs['depth'] += (depth,)
+    obs = self._get_obs()
 
     return obs, reward, done, info
 
@@ -376,3 +369,67 @@ class Environment(gym.Env):
     joints = np.float32(joints)
     joints[2:] = (joints[2:] + np.pi) % (2 * np.pi) - np.pi
     return joints
+
+  def _get_obs(self):
+    # Get RGB-D camera image observations.
+    obs = {'color': (), 'depth': ()}
+    for config in self.agent_cams:
+      color, depth, _ = self.render_camera(config)
+      obs['color'] += (color,)
+      obs['depth'] += (depth,)
+
+    return obs
+
+
+class EnvironmentNoRotationsWithHeightmap(Environment):
+  """Environment that disables any rotations and always passes [0, 0, 0, 1]."""
+
+  def __init__(self,
+               assets_root,
+               task=None,
+               disp=False,
+               shared_memory=False,
+               hz=240):
+    super(EnvironmentNoRotationsWithHeightmap,
+          self).__init__(assets_root, task, disp, shared_memory, hz)
+
+    heightmap_tuple = [
+        gym.spaces.Box(0.0, 20.0, (320, 160, 3), dtype=np.float32),
+        gym.spaces.Box(0.0, 20.0, (320, 160), dtype=np.float32),
+    ]
+    self.observation_space = gym.spaces.Dict({
+        'heightmap': gym.spaces.Tuple(heightmap_tuple),
+    })
+    self.action_space = gym.spaces.Dict({
+        'pose0': gym.spaces.Tuple((self.position_bounds,)),
+        'pose1': gym.spaces.Tuple((self.position_bounds,))
+    })
+
+  def step(self, action=None):
+    """Execute action with specified primitive.
+
+    Args:
+      action: action to execute.
+
+    Returns:
+      (obs, reward, done, info) tuple containing MDP step data.
+    """
+    if action is not None:
+      action = {
+          'pose0': (action['pose0'][0], [0., 0., 0., 1.]),
+          'pose1': (action['pose1'][0], [0., 0., 0., 1.]),
+      }
+    return super(EnvironmentNoRotationsWithHeightmap, self).step(action)
+
+  def _get_obs(self):
+    obs = {}
+
+    color_depth_obs = {'color': (), 'depth': ()}
+    for config in self.agent_cams:
+      color, depth, _ = self.render_camera(config)
+      color_depth_obs['color'] += (color,)
+      color_depth_obs['depth'] += (depth,)
+    cmap, hmap = utils.get_fused_heightmap(color_depth_obs, self.agent_cams,
+                                           self.task.bounds, pix_size=0.003125)
+    obs['heightmap'] = (cmap, hmap)
+    return obs
