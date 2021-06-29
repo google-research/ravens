@@ -25,6 +25,7 @@ import cv2
 import numpy as np
 from ravens.tasks import cameras
 from ravens.tasks import primitives
+from ravens.tasks import planners
 from ravens.tasks.grippers import Suction
 from ravens.utils import utils
 
@@ -228,7 +229,8 @@ class Task():
     # Move to next goal step if current goal step is complete.
     if np.abs(max_reward - step_reward) < 0.01:
       self.progress += max_reward  # Update task progress.
-      self.goals.pop(0)
+      print('Popping...')
+      # self.goals.pop(0)
 
     return reward, info
 
@@ -250,6 +252,7 @@ class Task():
     # if hasattr(self, 'goal'):
     # goal_done = len(self.goal['steps']) == 0  # pylint:
     # disable=g-explicit-length-test
+    return False
     return (len(self.goals) == 0) or (self._rewards > 0.99)  # pylint: disable=g-explicit-length-test
     # return zone_done or defs_done or goal_done
 
