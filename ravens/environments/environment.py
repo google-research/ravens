@@ -214,11 +214,7 @@ class Environment(gym.Env):
       # Exit early if action times out. We still return an observation
       # so that we don't break the Gym API contract.
       if timeout:
-        obs = {'color': (), 'depth': ()}
-        for config in self.agent_cams:
-          color, depth, _ = self.render_camera(config)
-          obs['color'] += (color,)
-          obs['depth'] += (depth,)
+        obs = self._get_obs()
         return obs, 0.0, True, self.info
 
     # Step simulator asynchronously until objects settle.
