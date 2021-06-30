@@ -25,11 +25,14 @@ from ravens.utils import utils
 class SweepingPiles(Task):
   """Sweeping task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.ee = Spatula
     self.max_steps = 20
-    self.primitive = primitives.push
+    if self.continuous:
+      self.primitive = primitives.PushContinuous()
+    else:
+      self.primitive = primitives.push
 
   def reset(self, env):
     super().reset(env)

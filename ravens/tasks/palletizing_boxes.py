@@ -27,8 +27,8 @@ import pybullet as p
 class PalletizingBoxes(Task):
   """Palletizing Task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 30
 
   def reset(self, env):

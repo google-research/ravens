@@ -27,8 +27,8 @@ import pybullet as p
 class PackingBoxes(Task):
   """Packing task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 20
 
   def reset(self, env):

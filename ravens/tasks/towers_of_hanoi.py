@@ -23,8 +23,8 @@ from ravens.utils import utils
 class TowersOfHanoi(Task):
   """Towers of Hanoi task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 14
 
   def reset(self, env):

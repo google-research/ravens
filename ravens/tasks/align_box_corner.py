@@ -25,8 +25,8 @@ from ravens.utils import utils
 class AlignBoxCorner(Task):
   """Aligning task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 3
 
   def reset(self, env):

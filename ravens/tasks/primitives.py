@@ -85,7 +85,6 @@ class PickPlace():
 
     return timeout
 
-
 def push(movej, movep, ee, pose0, pose1):  # pylint: disable=unused-argument
   """Execute pushing primitive.
 
@@ -126,3 +125,44 @@ def push(movej, movep, ee, pose0, pose1):  # pylint: disable=unused-argument
   timeout |= movep((pos1, rot), speed=0.003)
   timeout |= movep((over1, rot))
   return timeout
+
+
+class PickPlaceContinuous:
+  """A continuous pick-and-place primitive."""
+
+  def __init__(self, speed=0.01):
+    self.speed = speed
+    self.reset()
+
+  def reset(self):
+    self.s_bit = 0  # Tracks the suction state.
+
+  def __call__(self, movej, movep, ee, action):
+    del movej
+    timeout = movep(action['move_cmd'], speed=self.speed)
+    if timeout:
+      return True
+    if action['suction_cmd']:
+      if self.s_bit:
+        ee.release()
+      else:
+        ee.activate()
+      self.s_bit = not self.s_bit
+    return timeout
+
+
+class PushContinuous:
+  """A continuous pushing primitive."""
+
+  def __init__(self, fast_speed=0.01, slow_speed=0.003):
+    self.fast_speed = fast_speed
+    self.slow_speed = slow_speed
+
+  def reset(self):
+    pass
+
+  def __call__(self, movej, movep, ee, action):
+    del movej, ee
+    speed = self.slow_speed if action['slowdown_cmd'] else self.fast_speed
+    timeout = movep(action['move_cmd'], speed=speed)
+    return timeout
