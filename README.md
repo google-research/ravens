@@ -53,7 +53,7 @@ python setup.py install --user
 
 **Step 3.** Recommended: install GPU acceleration with NVIDIA [CUDA](https://developer.nvidia.com/cuda-toolkit) 10.1 and [cuDNN](https://developer.nvidia.com/cudnn) 7.6.5 for Tensorflow.
 ```shell
-./oss_scipts/install_cuda.sh  #  For Ubuntu 16.04 and 18.04.
+./oss_scripts/install_cuda.sh  #  For Ubuntu 16.04 and 18.04.
 conda install cudatoolkit==10.1.243 -y
 conda install cudnn==7.6.5 -y
 ```
