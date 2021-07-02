@@ -41,6 +41,22 @@ class EnvironmentTest(absltest.TestCase):
       if done:
         break
 
+  def test_environment_action_continuous(self):
+    env = environment.ContinuousEnvironment(ASSETS_PATH)
+    task = tasks.BlockInsertion(continuous=True)
+    env.set_task(task)
+    env.seed(0)
+    agent = task.oracle(env)
+    obs = env.reset()
+    info = None
+    done = False
+    for _ in range(100):
+      act = agent.act(obs, info)
+      self.assertTrue(env.action_space.contains(act))
+      obs, _, done, info = env.step(act)
+      if done:
+        break
+
 
 if __name__ == '__main__':
   absltest.main()

@@ -25,8 +25,8 @@ import pybullet as p
 class BlockInsertion(Task):
   """Insertion Task - Base Variant."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 3
 
   def reset(self, env):
@@ -82,8 +82,8 @@ class BlockInsertionEasy(BlockInsertionTranslation):
 class BlockInsertionSixDof(BlockInsertion):
   """Insertion Task - 6DOF Variant."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.sixdof = True
     self.pos_eps = 0.02
 

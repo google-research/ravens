@@ -24,6 +24,7 @@ import numpy as np
 
 from ravens import tasks
 from ravens.dataset import Dataset
+from ravens.environments.environment import ContinuousEnvironment
 from ravens.environments.environment import Environment
 
 flags.DEFINE_string('assets_root', '.', '')
@@ -33,6 +34,8 @@ flags.DEFINE_bool('shared_memory', False, '')
 flags.DEFINE_string('task', 'towers-of-hanoi', '')
 flags.DEFINE_string('mode', 'train', '')
 flags.DEFINE_integer('n', 1000, '')
+flags.DEFINE_bool('continuous', False, '')
+flags.DEFINE_integer('steps_per_seg', 3, '')
 
 FLAGS = flags.FLAGS
 
@@ -40,22 +43,28 @@ FLAGS = flags.FLAGS
 def main(unused_argv):
 
   # Initialize environment and task.
-  env = Environment(
+  env_cls = ContinuousEnvironment if FLAGS.continuous else Environment
+  env = env_cls(
       FLAGS.assets_root,
       disp=FLAGS.disp,
       shared_memory=FLAGS.shared_memory,
       hz=480)
-  task = tasks.names[FLAGS.task]()
+  task = tasks.names[FLAGS.task](continuous=FLAGS.continuous)
   task.mode = FLAGS.mode
 
   # Initialize scripted oracle agent and dataset.
-  agent = task.oracle(env)
+  agent = task.oracle(env, steps_per_seg=FLAGS.steps_per_seg)
   dataset = Dataset(os.path.join(FLAGS.data_dir, f'{FLAGS.task}-{task.mode}'))
 
   # Train seeds are even and test seeds are odd.
   seed = dataset.max_seed
   if seed < 0:
     seed = -1 if (task.mode == 'test') else -2
+
+  # Determine max steps per episode.
+  max_steps = task.max_steps
+  if FLAGS.continuous:
+    max_steps *= (FLAGS.steps_per_seg * agent.num_poses)
 
   # Collect training data from oracle demonstrations.
   while dataset.n_episodes < FLAGS.n:
@@ -67,7 +76,7 @@ def main(unused_argv):
     obs = env.reset()
     info = None
     reward = 0
-    for _ in range(task.max_steps):
+    for _ in range(max_steps):
       act = agent.act(obs, info)
       episode.append((obs, act, reward, info))
       obs, reward, done, info = env.step(act)

@@ -25,8 +25,8 @@ from ravens.utils import utils
 class AssemblingKits(Task):
   """Kitting Tasks base class."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     # self.ee = 'suction'
     self.max_steps = 10
     # self.metric = 'pose'
@@ -129,8 +129,8 @@ class AssemblingKits(Task):
 class AssemblingKitsEasy(AssemblingKits):
   """Kitting Task - Easy variant."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.rot_eps = np.deg2rad(30)
     self.train_set = np.int32(
         [0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19])

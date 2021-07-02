@@ -25,8 +25,8 @@ import pybullet as p
 class PlaceRedInGreen(Task):
   """Sorting Task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 10
     self.pos_eps = 0.05
 

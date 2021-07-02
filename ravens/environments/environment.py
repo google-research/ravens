@@ -22,6 +22,7 @@ import time
 import gym
 import numpy as np
 from ravens.tasks import cameras
+from ravens.tasks.grippers import Spatula
 from ravens.utils import pybullet_utils
 from ravens.utils import utils
 
@@ -214,11 +215,7 @@ class Environment(gym.Env):
       # Exit early if action times out. We still return an observation
       # so that we don't break the Gym API contract.
       if timeout:
-        obs = {'color': (), 'depth': ()}
-        for config in self.agent_cams:
-          color, depth, _ = self.render_camera(config)
-          obs['color'] += (color,)
-          obs['depth'] += (depth,)
+        obs = self._get_obs()
         return obs, 0.0, True, self.info
 
     # Step simulator asynchronously until objects settle.
@@ -433,3 +430,74 @@ class EnvironmentNoRotationsWithHeightmap(Environment):
                                            self.task.bounds, pix_size=0.003125)
     obs['heightmap'] = (cmap, hmap)
     return obs
+
+
+class ContinuousEnvironment(Environment):
+  """A continuous environment."""
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+
+    # Redefine action space, assuming it's a suction-based task. We'll override
+    # it in `reset()` if that is not the case.
+    self.position_bounds = gym.spaces.Box(
+        low=np.array([-1.0, -1.0, -1.0], dtype=np.float32),
+        high=np.array([1.0, 1.0, 1.0], dtype=np.float32),
+        shape=(3,),
+        dtype=np.float32
+    )
+    self.action_space = gym.spaces.Dict({
+        'move_cmd':
+            gym.spaces.Tuple(
+                (self.position_bounds,
+                 gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32))),
+        'suction_cmd': gym.spaces.Discrete(2),  # Binary 0-1.
+        'acts_left': gym.spaces.Discrete(1000),
+    })
+
+  def set_task(self, task):
+    super().set_task(task)
+
+    # Redefine the action-space in case it is a pushing task. At this point, the
+    # ee has been instantiated.
+    if self.task.ee == Spatula:
+      self.action_space = gym.spaces.Dict({
+          'move_cmd':
+              gym.spaces.Tuple(
+                  (self.position_bounds,
+                   gym.spaces.Box(-1.0, 1.0, shape=(4,), dtype=np.float32))),
+          'slowdown_cmd': gym.spaces.Discrete(2),  # Binary 0-1.
+          'acts_left': gym.spaces.Discrete(1000),
+      })
+
+  def get_ee_pose(self):
+    return p.getLinkState(self.ur5, self.ee_tip)[0:2]
+
+  def step(self, action=None):
+    if action is not None:
+      timeout = self.task.primitive(self.movej, self.movep, self.ee, action)
+
+      # Exit early if action times out. We still return an observation
+      # so that we don't break the Gym API contract.
+      if timeout:
+        obs = self._get_obs()
+        return obs, 0.0, True, self.info
+
+    # Step simulator asynchronously until objects settle.
+    while not self.is_static:
+      p.stepSimulation()
+
+    # Get task rewards.
+    reward, info = self.task.reward() if action is not None else (0, {})
+    task_done = self.task.done()
+    if action is not None:
+      done = task_done and action['acts_left'] == 0
+    else:
+      done = task_done
+
+    # Add ground truth robot state into info.
+    info.update(self.info)
+
+    obs = self._get_obs()
+
+    return obs, reward, done, info

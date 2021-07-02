@@ -28,11 +28,19 @@ import pybullet as p
 class ManipulatingRope(Task):
   """Cable task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 20
     self.pos_eps = 0.02
-    self.primitive = primitives.PickPlace(height=0.02, speed=0.001)
+
+    if self.continuous:
+      self.primitive = primitives.PickPlaceContinuous(speed=0.001)
+    else:
+      self.primitive = primitives.PickPlace(height=0.02, speed=0.001)
+
+  def _continuous_oracle(self, env, **kwargs):
+    kwargs['height'] = 0.02
+    return super()._continuous_oracle(env, **kwargs)
 
   def reset(self, env):
     super().reset(env)

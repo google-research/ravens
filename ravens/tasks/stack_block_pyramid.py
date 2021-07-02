@@ -25,8 +25,8 @@ import pybullet as p
 class StackBlockPyramid(Task):
   """Stacking task."""
 
-  def __init__(self):
-    super().__init__()
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
     self.max_steps = 12
 
   def reset(self, env):
