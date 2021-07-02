@@ -27,13 +27,13 @@ from ravens.dataset import Dataset
 from ravens.environments.environment import Environment, ContinuousEnvironment
 
 flags.DEFINE_string('assets_root', '.', '')
-flags.DEFINE_string('data_dir', 'data', '')
+flags.DEFINE_string('data_dir', '.', '')
 flags.DEFINE_bool('disp', False, '')
 flags.DEFINE_bool('shared_memory', False, '')
-flags.DEFINE_bool('continuous', True, '')
 flags.DEFINE_string('task', 'towers-of-hanoi', '')
 flags.DEFINE_string('mode', 'train', '')
 flags.DEFINE_integer('n', 1000, '')
+flags.DEFINE_bool('continuous', False, '')
 flags.DEFINE_integer('steps_per_seg', 3, '')
 
 FLAGS = flags.FLAGS
@@ -64,7 +64,6 @@ def main(unused_argv):
   max_steps = task.max_steps
   if FLAGS.continuous:
     max_steps *= (FLAGS.steps_per_seg * agent.num_poses)
-  print(f"Max steps: {max_steps}")
 
   # Collect training data from oracle demonstrations.
   while dataset.n_episodes < FLAGS.n:

@@ -1,8 +1,1 @@
 /venv/
-__pycache__/
-data/
-build/
-dist/
-*.egg-info/
-.ipynb_checkpoints/
-*.mp4
