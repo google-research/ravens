@@ -268,7 +268,10 @@ class Task():
         self.goals.pop(0)
 
     else:
-      reward = self.progress
+      # At this point we are done with the task but executing the last movements
+      # in the plan. We should return 0 reward to prevent the total reward from
+      # exceeding 1.0.
+      reward = 0.0
 
     return reward, info
 
