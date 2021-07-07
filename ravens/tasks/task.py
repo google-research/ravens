@@ -445,6 +445,8 @@ class ContinuousOracle:
     if not self._actions:
       # Query the base oracle for pick and place poses.
       act = self._base_oracle.act(obs, info)
+      if act is None:
+          return
       self._actions = self._planner(self._env.get_ee_pose(), act['pose0'],
                                     act['pose1'])
     act = self._actions.pop(0)
