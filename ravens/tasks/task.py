@@ -268,7 +268,10 @@ class Task():
         self.goals.pop(0)
 
     else:
-      reward = self.progress
+      # At this point we are done with the task but executing the last movements
+      # in the plan. We should return 0 reward to prevent the total reward from
+      # exceeding 1.0.
+      reward = 0.0
 
     return reward, info
 
@@ -439,9 +442,12 @@ class ContinuousOracle:
     self._actions = []
 
   def act(self, obs, info):
+    """Get oracle action from planner."""
     if not self._actions:
       # Query the base oracle for pick and place poses.
       act = self._base_oracle.act(obs, info)
+      if act is None:
+        return
       self._actions = self._planner(self._env.get_ee_pose(), act['pose0'],
                                     act['pose1'])
     act = self._actions.pop(0)
