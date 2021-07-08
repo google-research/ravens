@@ -22,7 +22,6 @@ import numpy as np
 from ravens.utils import utils
 from scipy.interpolate import interp1d
 from scipy.spatial.transform import Rotation
-from scipy.spatial.transform import RotationSpline
 
 
 class Planner(abc.ABC):
@@ -61,6 +60,9 @@ class Planner(abc.ABC):
   def _interpolate_rotation(self):
     quats = [p[-1] for p in self.poses]
     self.rots = Rotation.from_quat(quats)
+
+    # Import here since older versions of scipy don't have RotationSpline.
+    from scipy.spatial.transform import RotationSpline  # pylint: disable=g-import-not-at-top
     self.rot_spline = RotationSpline(self.times, self.rots)
 
   def _fit(self):
