@@ -16,6 +16,8 @@
 """Environment class."""
 
 import os
+import pkgutil
+import sys
 import tempfile
 import time
 
@@ -27,6 +29,7 @@ from ravens.utils import pybullet_utils
 from ravens.utils import utils
 
 import pybullet as p
+
 
 PLACE_STEP = 0.0003
 PLACE_DELTA_THRESHOLD = 0.005
@@ -44,7 +47,8 @@ class Environment(gym.Env):
                task=None,
                disp=False,
                shared_memory=False,
-               hz=240):
+               hz=240,
+               use_egl=False):
     """Creates OpenAI Gym-style environment with PyBullet.
 
     Args:
@@ -54,10 +58,15 @@ class Environment(gym.Env):
       disp: show environment with PyBullet's built-in display viewer.
       shared_memory: run with shared memory.
       hz: PyBullet physics simulation step speed. Set to 480 for deformables.
+      use_egl: Whether to use EGL rendering. Only supported on Linux. Should get
+        a significant speedup in rendering when using.
 
     Raises:
       RuntimeError: if pybullet cannot load fileIOPlugin.
     """
+    if use_egl and disp:
+      raise ValueError('EGL rendering cannot be used with `disp=True`.')
+
     self.pix_size = 0.003125
     self.obj_ids = {'fixed': [], 'rigid': [], 'deformable': []}
     self.homej = np.array([-1, -0.5, 0.5, -0.5, -0.5, 0]) * np.pi
@@ -109,6 +118,18 @@ class Environment(gym.Env):
           textArgument=assets_root,
           intArgs=[p.AddFileIOAction],
           physicsClientId=client)
+
+    self._egl_plugin = None
+    if use_egl:
+      assert sys.platform == 'linux', ('EGL rendering is only supported on '
+                                       'Linux.')
+      egl = pkgutil.get_loader('eglRenderer')
+      if egl:
+        self._egl_plugin = p.loadPlugin(egl.get_filename(),
+                                        '_eglRendererPlugin')
+      else:
+        self._egl_plugin = p.loadPlugin('eglRendererPlugin')
+      print('EGL renderering enabled.')
 
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
     p.setPhysicsEngineParameter(enableFileCaching=0)
@@ -233,6 +254,11 @@ class Environment(gym.Env):
 
     return obs, reward, done, info
 
+  def close(self):
+    if self._egl_plugin is not None:
+      p.unloadPlugin(self._egl_plugin)
+    p.disconnect()
+
   def render(self, mode='rgb_array'):
     # Render only the color image from the first camera.
     # Only support rgb_array for now.
@@ -270,6 +296,8 @@ class Environment(gym.Env):
         projectionMatrix=projm,
         shadow=1,
         flags=p.ER_SEGMENTATION_MASK_OBJECT_AND_LINKINDEX,
+        # Note when use_egl is toggled, this option will not actually use openGL
+        # but EGL instead.
         renderer=p.ER_BULLET_HARDWARE_OPENGL)
 
     # Get color image.
