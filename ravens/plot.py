@@ -40,7 +40,7 @@ def main(unused_argv):
   # Load and print results to console.
   path = FLAGS.root_dir
   curve = []
-  for fname in sorted(tf.io.gfile.listdir(path)):
+  for fname in tf.io.gfile.listdir(path):
     fname = os.path.join(path, fname)
     if name in fname and '.pkl' in fname:
       n_steps = int(fname[(fname.rfind('-') + 1):-4])
@@ -50,8 +50,10 @@ def main(unused_argv):
         rewards.append(reward)
       score = np.mean(rewards)
       std = np.std(rewards)
-      print(f'  {n_steps} steps:\t{score:.1f}%\t± {std:.1f}%')
       curve.append((n_steps, score, std))
+  curve.sort()
+  for log in curve:
+    print(f'  {log[0]} steps:\t{log[1]:.2f}%\t± {log[2]:.2f}%')
 
   # Plot results over training steps.
   title = f'{FLAGS.agent} on {FLAGS.task} w/ {FLAGS.n_demos} demos'
