@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2021 The Ravens Authors.
+# Copyright 2022 The Ravens Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ from ravens.tasks import primitives
 from ravens.tasks.grippers import Suction
 from ravens.utils import utils
 
+import six
 import pybullet as p
 
 
@@ -382,6 +383,7 @@ class Task():
     with open(fname, 'w') as file:
       file.write(fdata)
     return fname
+
 
   def get_random_size(self, min_x, max_x, min_y, max_y, min_z, max_z):
     """Get random box size."""
